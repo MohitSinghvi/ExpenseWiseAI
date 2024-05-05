@@ -1,16 +1,12 @@
 package com.shashank.expensemanager.fragments;
 
-import android.app.DatePickerDialog;
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.content.pm.PackageManager;
+import androidx.lifecycle.ViewModelProviders;
+
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +15,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -29,10 +24,8 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.shashank.expensemanager.R;
-import com.shashank.expensemanager.activities.MainActivity;
 import com.shashank.expensemanager.transactionDb.AppDatabase;
 import com.shashank.expensemanager.transactionDb.AppExecutors;
-import com.shashank.expensemanager.transactionDb.TransactionViewModel;
 import com.shashank.expensemanager.utils.Constants;
 import com.shashank.expensemanager.utils.ExpenseList;
 
@@ -42,10 +35,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import static com.shashank.expensemanager.activities.MainActivity.fab;
 
