@@ -184,7 +184,7 @@ public class ChatbotFragment extends Fragment {
                     messageAdapter.notifyItemInserted(messageList.size() - 1);
                     inputEditText.setText("");
 
-                    conversationHistory += "USER: " + userMessage + "\\n";
+                    conversationHistory += "USER: " + userMessage.replace("\n", "\\n") + "\\n";
                     Log.i("YOYOYOYOYO", "ASDASDSA");
                     sendMessageToAPI(userMessage);
                 }
@@ -270,7 +270,7 @@ public class ChatbotFragment extends Fragment {
                             String replyMessage = jsonObject.getString("message");
                             messageList.add(new Message(replyMessage, false));
                             messageAdapter.notifyItemInserted(messageList.size() - 1);
-                            conversationHistory += "AI BOT: " + replyMessage + "\\n";
+                            conversationHistory += "AI BOT: " + replyMessage.replace("\n", "\\n") + "\\n";
                         }
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
