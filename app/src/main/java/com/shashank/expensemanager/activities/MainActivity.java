@@ -16,6 +16,7 @@ import com.shashank.expensemanager.fragments.BalanceFragment;
 import com.shashank.expensemanager.fragments.ChatbotFragment;
 import com.shashank.expensemanager.fragments.CustomBottomSheetDialogFragment;
 import com.shashank.expensemanager.fragments.ExpenseFragment;
+import com.shashank.expensemanager.fragments.UploadFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new ExpenseFragment(),"Expenses");
         adapter.addFragment(new BalanceFragment(),"Balance");
         adapter.addFragment(new ChatbotFragment(), "AI CHAT");
+        adapter.addFragment(new UploadFragment(), "AI VISION");
         viewPager.setAdapter(adapter);
     }
 
