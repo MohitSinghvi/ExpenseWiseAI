@@ -10,6 +10,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -288,6 +290,8 @@ public class AddExpenseActivity extends AppCompatActivity {
                         categoryOfExpense = "Income";
                     else
                         categoryOfExpense = categories.get(categorySpinner.getSelectedItemPosition());
+
+                    Log.i("dateOfExpense", String.valueOf(dateOfExpense));
 
                     final TransactionEntry mTransactionEntry = new TransactionEntry(amount,
                             categoryOfExpense,

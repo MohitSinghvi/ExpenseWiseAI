@@ -13,6 +13,7 @@ import android.view.View;
 import com.shashank.expensemanager.R;
 import com.shashank.expensemanager.adapters.SectionsPageAdapter;
 import com.shashank.expensemanager.fragments.BalanceFragment;
+import com.shashank.expensemanager.fragments.ChatbotFragment;
 import com.shashank.expensemanager.fragments.CustomBottomSheetDialogFragment;
 import com.shashank.expensemanager.fragments.ExpenseFragment;
 
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         SectionsPageAdapter adapter=new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new ExpenseFragment(),"Expenses");
         adapter.addFragment(new BalanceFragment(),"Balance");
+        adapter.addFragment(new ChatbotFragment(), "AI CHAT");
         viewPager.setAdapter(adapter);
     }
 

@@ -10,7 +10,7 @@ import java.util.List;
 
 public class TransactionViewModel extends AndroidViewModel {
 
-    public final LiveData<List<TransactionEntry>> expenseList;
+    public static LiveData<List<TransactionEntry>> expenseList = null;
     private AppDatabase appDatabase;
 
 
@@ -24,7 +24,7 @@ public class TransactionViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<TransactionEntry>> getExpenseList() {
+    public static LiveData<List<TransactionEntry>> getExpenseList() {
         return expenseList;
     }
 
