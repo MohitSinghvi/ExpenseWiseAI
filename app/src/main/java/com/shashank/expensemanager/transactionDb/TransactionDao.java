@@ -43,4 +43,7 @@ public interface TransactionDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateExpenseDetails(TransactionEntry transactionEntry);
+
+    @Query("SELECT DISTINCT category FROM transactionTable")
+    List<String> getAllCategories();
 }
