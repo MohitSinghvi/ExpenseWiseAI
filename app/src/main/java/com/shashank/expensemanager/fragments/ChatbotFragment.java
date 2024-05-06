@@ -17,14 +17,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.shashank.expensemanager.R;
+import com.shashank.expensemanager.transactionDb.AppDatabase;
+import com.shashank.expensemanager.transactionDb.AppExecutors;
 import com.shashank.expensemanager.transactionDb.TransactionEntry;
 import com.shashank.expensemanager.transactionDb.TransactionViewModel;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -127,6 +132,9 @@ public class ChatbotFragment extends Fragment {
     private Button clearButton;
     private String conversationHistory = "";
 
+    private static AppDatabase appDatabase;
+
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
@@ -140,6 +148,7 @@ public class ChatbotFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chatbot, container, false);
+        appDatabase = AppDatabase.getInstance(getContext());
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         inputEditText = view.findViewById(R.id.inputEditText);
@@ -202,14 +211,53 @@ public class ChatbotFragment extends Fragment {
                     try {
                         String responseJson = response.body().string();
                         // Parse the response JSON and extract the reply message
-                        String replyMessage = extractReplyMessage(responseJson);
+                        JSONObject jsonObject = new JSONObject(responseJson);
 
-                        Log.i("replyMessage yo", replyMessage);
+                        if (jsonObject.getBoolean("insert_to_database")) {
+                            JSONArray valuesToInsert = jsonObject.getJSONArray("values_to_insert");
 
-                        messageList.add(new Message(replyMessage, false));
-                        messageAdapter.notifyItemInserted(messageList.size() - 1);
-                        conversationHistory += "AI BOT: " + replyMessage + "\\n";
-                    } catch (IOException e) {
+                            for (int i = 0; i < valuesToInsert.length(); i++) {
+                                JSONObject transactionObject = valuesToInsert.getJSONObject(i);
+                                int amount = transactionObject.getInt("amount");
+                                String category = transactionObject.getString("category");
+                                String description = transactionObject.getString("description");
+                                String dateStr = transactionObject.getString("date");
+                                String transactionType = transactionObject.getString("transactionType");
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
+                                Date date = null;
+                                try {
+                                    date = sdf.parse(dateStr);
+                                } catch (Exception error) {
+
+                                }
+
+
+                                final TransactionEntry mTransactionEntry = new TransactionEntry(amount,
+                                        category,
+                                        description,
+                                        date,
+                                        transactionType
+                                );
+
+                                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        appDatabase.transactionDao().insertExpense(mTransactionEntry);
+                                    }
+                                });
+                            }
+
+                            messageList.add(new Message("Database updated!", false));
+                            messageAdapter.notifyItemInserted(messageList.size() - 1);
+                            conversationHistory += "AI BOT: Database updated!\\n";
+                        } else {
+                            String replyMessage = jsonObject.getString("message");
+                            messageList.add(new Message(replyMessage, false));
+                            messageAdapter.notifyItemInserted(messageList.size() - 1);
+                            conversationHistory += "AI BOT: " + replyMessage + "\\n";
+                        }
+                    } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
                 } else {
