@@ -13,6 +13,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -134,6 +137,9 @@ public class ChatbotFragment extends Fragment {
 
     private static AppDatabase appDatabase;
 
+    private TransactionViewModel transactionViewModel;
+    private List<TransactionEntry> transactionEntries;
+
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -159,6 +165,15 @@ public class ChatbotFragment extends Fragment {
         messageAdapter = new MessageAdapter(messageList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(messageAdapter);
+
+        transactionViewModel = ViewModelProviders.of(this)
+                .get(TransactionViewModel.class);
+        transactionViewModel.getExpenseList().observe(getViewLifecycleOwner(), new Observer<List<TransactionEntry>>() {
+            @Override
+            public void onChanged(List<TransactionEntry> entries) {
+                transactionEntries = entries;
+            }
+        });
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -284,9 +299,6 @@ public class ChatbotFragment extends Fragment {
     }
 
     private String getMetadataFromTransactionTable() {
-        // Retrieve the transaction entries from the database
-        List<TransactionEntry> transactionEntries = TransactionViewModel.getExpenseList().getValue();
-
         StringBuilder metadata = new StringBuilder();
         for (TransactionEntry entry : transactionEntries) {
             metadata.append(entry.getAmount()).append(" - ")
