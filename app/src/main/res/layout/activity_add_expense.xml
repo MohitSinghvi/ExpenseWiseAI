@@ -4,108 +4,116 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="#FFFFFF"
     tools:context=".activities.AddExpenseActivity">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/amountTextInputLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="35dp"
-        android:layout_marginStart="25dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/amountTextInputEditText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Amount"
-            android:inputType="number"
-            android:ems="14"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
     <LinearLayout
-        android:layout_marginTop="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/amountTextInputLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/dateLinerLayout"
-            android:orientation="vertical">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Date"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginStart="25dp"
-                    android:textSize="18sp"
-                    android:padding="4dp"/>
-                <TextView
-                    android:id="@+id/dateTextView"
-                    android:text="11/09/2017"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="10dp"
-                    android:textSize="20sp"
-                    android:textColor="#000000"
-                    android:padding="4dp"/>
-        </LinearLayout>
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="35dp">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/categoryLinerLayout"
-            android:orientation="vertical">
-            <TextView
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/amountTextInputEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Category"
-                android:layout_marginTop="15dp"
-                android:layout_marginStart="35dp"
-                android:layout_marginEnd="15dp"
-                android:textSize="18sp"
-                android:padding="4dp"/>
+                android:ems="14"
+                android:hint="Amount"
+                android:inputType="number" />
 
-            <Spinner
-                android:id="@+id/categorySpinner"
-                android:layout_width="150dp"
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="111dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/dateLinerLayout"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:layout_marginStart="23dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginEnd="30dp"/>
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="15dp"
+                    android:background="#F6F5F5"
+                    android:padding="4dp"
+                    android:text="Date"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/dateTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:padding="4dp"
+                    android:text="11/09/2017"
+                    android:textColor="#000000"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/categoryLinerLayout"
+                android:layout_width="225dp"
+                android:layout_height="100dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="35dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:background="#F6F5F5"
+                    android:padding="4dp"
+                    android:text="Category"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="18sp" />
+
+                <Spinner
+                    android:id="@+id/categorySpinner"
+                    android:layout_width="157dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="23dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="30dp"
+                    android:layout_marginBottom="10dp" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
-
-    </LinearLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/descriptionTextInputLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:layout_marginStart="25dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/descriptionTextInputEditText"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/descriptionTextInputLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Description"
-            android:inputType="textPersonName|textCapSentences"
-            android:ems="14"/>
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="15dp">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/descriptionTextInputEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="14"
+                android:hint="Description"
+                android:inputType="textPersonName|textCapSentences" />
 
-</LinearLayout>
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
 </ScrollView>

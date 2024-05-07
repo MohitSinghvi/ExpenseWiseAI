@@ -8,13 +8,15 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="332dp"
         android:scaleType="centerCrop" />
 
     <Button
         android:id="@+id/uploadButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="379dp"
+        android:layout_height="60dp"
+        android:background="@color/colorAccent"
         android:text="Upload Image" />
+
 
 </LinearLayout>

@@ -6,10 +6,10 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="382dp"
+        android:layout_height="509dp"
         android:layout_above="@id/inputLayout"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="192dp" />
 
     <LinearLayout
         android:id="@+id/inputLayout"
@@ -17,19 +17,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
-
-        <EditText
-            android:id="@+id/inputEditText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Enter your message" />
-
-        <Button
-            android:id="@+id/sendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Send" />
 
     </LinearLayout>
 
@@ -39,6 +26,29 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/inputLayout"
         android:layout_alignParentEnd="true"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="120dp"
+        android:background="@color/colorAccent"
         android:text="Clear" />
+
+    <EditText
+        android:id="@+id/inputEditText"
+        android:layout_width="271dp"
+        android:layout_height="129dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="40dp"
+        android:layout_weight="1"
+        android:hint="Enter your message" />
+
+    <Button
+        android:id="@+id/sendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="42dp"
+        android:background="@color/colorPrimary"
+        android:text="Send" />
 
 </RelativeLayout>
