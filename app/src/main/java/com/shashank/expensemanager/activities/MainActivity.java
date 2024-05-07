@@ -1,29 +1,22 @@
 package com.shashank.expensemanager.activities;
 
-import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import androidx.viewpager.widget.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-
-import android.widget.TextView;
 
 import com.shashank.expensemanager.R;
 import com.shashank.expensemanager.adapters.SectionsPageAdapter;
 import com.shashank.expensemanager.fragments.BalanceFragment;
+import com.shashank.expensemanager.fragments.ChatbotFragment;
 import com.shashank.expensemanager.fragments.CustomBottomSheetDialogFragment;
 import com.shashank.expensemanager.fragments.ExpenseFragment;
+import com.shashank.expensemanager.fragments.UploadFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
         SectionsPageAdapter adapter=new SectionsPageAdapter(getSupportFragmentManager());
         adapter.addFragment(new ExpenseFragment(),"Expenses");
         adapter.addFragment(new BalanceFragment(),"Balance");
+        adapter.addFragment(new ChatbotFragment(), "AI CHAT");
+        adapter.addFragment(new UploadFragment(), "AI VISION");
         viewPager.setAdapter(adapter);
     }
 

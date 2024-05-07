@@ -1,16 +1,12 @@
 package com.shashank.expensemanager.fragments;
 
-import android.app.DatePickerDialog;
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
-import android.content.pm.PackageManager;
+import androidx.lifecycle.ViewModelProviders;
+
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,20 +15,21 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LegendEntry;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.shashank.expensemanager.R;
-import com.shashank.expensemanager.activities.MainActivity;
 import com.shashank.expensemanager.transactionDb.AppDatabase;
 import com.shashank.expensemanager.transactionDb.AppExecutors;
-import com.shashank.expensemanager.transactionDb.TransactionViewModel;
 import com.shashank.expensemanager.utils.Constants;
 import com.shashank.expensemanager.utils.ExpenseList;
 
@@ -42,10 +39,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import static com.shashank.expensemanager.activities.MainActivity.fab;
 
@@ -113,78 +108,150 @@ public class BalanceFragment extends Fragment implements AdapterView.OnItemSelec
         }
     }
 
-    private void setupPieChart() {
+    private int getWeekExpenseByCategory(String category) throws ParseException {
+        Calendar calendar = Calendar.getInstance();
 
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String startDate = "", endDate = "";
+        // Set the calendar to sunday of the current week
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        startDate = df.format(calendar.getTime());
+        Date sDate = df.parse(startDate);
+        final long sdate = sDate.getTime();
+
+        calendar.add(Calendar.DATE, 6);
+        endDate = df.format(calendar.getTime());
+        Date eDate = df.parse(endDate);
+        final long edate = eDate.getTime();
+
+        return mAppDb.transactionDao().getSumExpenseByCategoryCustomDate(category, sdate, edate);
+    }
+
+    private int getMonthExpenseByCategory(String category) throws ParseException {
+        Calendar calendar = Calendar.getInstance();
+
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String startDate = "", endDate = "";
+
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        startDate = df.format(calendar.getTime());
+        Date sDate = df.parse(startDate);
+        final long sdate = sDate.getTime();
+
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        endDate = df.format(calendar.getTime());
+        Date eDate = df.parse(endDate);
+        final long edate = eDate.getTime();
+
+        return mAppDb.transactionDao().getSumExpenseByCategoryCustomDate(category, sdate, edate);
+    }
+
+    private void setupPieChart() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                if(spinner.getSelectedItemPosition()==0)
-                    getAllPieValues();
-                else if(spinner.getSelectedItemPosition()==1) {
-                    try {
-                        getWeekPieValues();
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
-                else if(spinner.getSelectedItemPosition()==2){
-                    try {
-                        getMonthPieValues();
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
-
+                List<String> categories = mAppDb.transactionDao().getAllCategories();
                 expenseList.clear();
-             if(foodExpense!=0)
-                 expenseList.add(new ExpenseList("Food",foodExpense));
-             if(travelExpense!=0)
-                 expenseList.add(new ExpenseList("Travel",travelExpense));
-             if(clothesExpense!=0)
-                 expenseList.add(new ExpenseList("Clothes",clothesExpense));
-             if(moviesExpense!=0)
-                 expenseList.add(new ExpenseList("Movies",moviesExpense));
-             if(heathExpense!=0)
-                 expenseList.add(new ExpenseList("Health",heathExpense));
-             if(groceryExpense!=0)
-                 expenseList.add(new ExpenseList("Grocery",groceryExpense));
-             if(otherExpense!=0)
-                 expenseList.add(new ExpenseList("Other",otherExpense));
+
+                for (String category : categories) {
+                    int expenseAmount = 0;
+                    if (spinner.getSelectedItemPosition() == 0)
+                        expenseAmount = mAppDb.transactionDao().getSumExpenseByCategory(category);
+                    else if (spinner.getSelectedItemPosition() == 1) {
+                        try {
+                            expenseAmount = getWeekExpenseByCategory(category);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    } else if (spinner.getSelectedItemPosition() == 2) {
+                        try {
+                            expenseAmount = getMonthExpenseByCategory(category);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if (expenseAmount != 0)
+                        expenseList.add(new ExpenseList(category, expenseAmount));
+                }
             }
         });
-
 
         AppExecutors.getInstance().mainThread().execute(new Runnable() {
             @Override
             public void run() {
+                if (!expenseList.isEmpty()) {
+                    List<PieEntry> pieEntries = new ArrayList<>();
+                    for (int i = 0; i < expenseList.size(); i++) {
+                        pieEntries.add(new PieEntry(expenseList.get(i).getAmount(), expenseList.get(i).getCategory()));
+                    }
+                    pieChart.setVisibility(View.VISIBLE);
+                    PieDataSet dataSet = new PieDataSet(pieEntries, null);
+//                    dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+                    PieData pieData = new PieData(dataSet);
 
-                List<PieEntry> pieEntries = new ArrayList<>();
-                for(int i = 0 ; i <expenseList.size(); i++){
-                    pieEntries.add(new PieEntry(expenseList.get(i).getAmount(),expenseList.get(i).getCategory()));
+                    int[] colors = new int[expenseList.size()];
+                    for (int i = 0; i < expenseList.size(); i++) {
+                        colors[i] = Color.HSVToColor(new float[]{i * 360f / expenseList.size(), 1f, 1f});
+                    }
+                    dataSet.setColors(colors);
+
+                    pieData.setValueTextSize(16);
+                    pieData.setValueTextColor(Color.WHITE);
+                    pieData.setValueFormatter(new IValueFormatter() {
+                        @Override
+                        public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                            return ""; // Return an empty string to remove percentages from the chart
+                        }
+                    });
+                    pieChart.setUsePercentValues(false); // Disable percentage values on the chart
+                    pieChart.setData(pieData);
+                    pieChart.animateY(1000);
+                    pieChart.invalidate();
+
+                    pieChart.setDrawEntryLabels(false);
+
+                    pieChart.getDescription().setText("");
+                    Legend legend = pieChart.getLegend();
+
+                    legend.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+                    legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+                    legend.setDrawInside(false);
+                    legend.setOrientation(Legend.LegendOrientation.VERTICAL);
+
+                    legend.setXEntrySpace(5f); // space between legend entries on the x-axis
+                    legend.setYEntrySpace(5f); // space between legend entries on the y-axis
+                    legend.setXOffset(5f); // set extra offset from the chart on the x-axis
+                    legend.setYOffset(5f); // set extra offset from the chart on the y-axis
+
+                    // Add percentage values to the legend entries
+                    List<LegendEntry> legendEntries = new ArrayList<>();
+                    for (int i = 0; i < expenseList.size(); i++) {
+                        Log.i("YOCHILLLL", String.valueOf(i));
+                        LegendEntry entry = new LegendEntry();
+                        entry.formColor = dataSet.getColor(i);
+                        entry.label = expenseList.get(i).getCategory() + " (" + calculatePercentage(expenseList.get(i).getAmount()) + "%)";
+                        legendEntries.add(entry);
+                    }
+                    legend.setCustom(legendEntries);
+                } else {
+                    pieChart.setVisibility(View.INVISIBLE);  // Or another appropriate action
                 }
-                pieChart.setVisibility(View.VISIBLE);
-                PieDataSet dataSet = new PieDataSet(pieEntries,null);
-                dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
-                PieData pieData = new PieData(dataSet);
-
-                pieData.setValueTextSize(16);
-                pieData.setValueTextColor(Color.WHITE);
-                pieData.setValueFormatter(new PercentFormatter());
-                pieChart.setUsePercentValues(true);
-                pieChart.setData(pieData);
-                pieChart.animateY(1000);
-                pieChart.invalidate();
-
-                pieChart.getDescription().setText("");
-                Legend l=pieChart.getLegend();
-                l.setPosition(Legend.LegendPosition.LEFT_OF_CHART);
-                //l.setXEntrySpace(8f);
-                //l.setYEntrySpace(1f);
-                //l.setYOffset(0f);
             }
         });
-
     }
+
+    private String calculatePercentage(float value) {
+        float totalExpense = 0;
+        for (ExpenseList expense : expenseList) {
+            totalExpense += expense.getAmount();
+        }
+        float percentage = (value / totalExpense) * 100;
+        return String.format(Locale.getDefault(), "%.1f", percentage);
+    }
+
+
+
 
 
     @Override
@@ -221,79 +288,15 @@ public class BalanceFragment extends Fragment implements AdapterView.OnItemSelec
     public void onNothingSelected(AdapterView<?> adapterView) {
     }
 
-
-    private void getAllPieValues(){
-        foodExpense =mAppDb.transactionDao().getSumExpenseByCategory("Food");
-        travelExpense=mAppDb.transactionDao().getSumExpenseByCategory("Travel");
-        clothesExpense=mAppDb.transactionDao().getSumExpenseByCategory("Clothes");
-        moviesExpense=mAppDb.transactionDao().getSumExpenseByCategory("Movies");
-        heathExpense=mAppDb.transactionDao().getSumExpenseByCategory("Health");
-        groceryExpense=mAppDb.transactionDao().getSumExpenseByCategory("Grocery");
-        otherExpense=mAppDb.transactionDao().getSumExpenseByCategory("Other");
-    }
-
-    private void getWeekPieValues() throws ParseException {
-        Calendar calendar;
-        calendar=Calendar.getInstance();
-
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        String startDate = "", endDate = "";
-        // Set the calendar to sunday of the current week
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        startDate = df.format(calendar.getTime());
-        Date sDate=df.parse(startDate);
-        final long sdate=sDate.getTime();
-
-        calendar.add(Calendar.DATE, 6);
-        endDate = df.format(calendar.getTime());
-        Date eDate=df.parse(endDate);
-        final long edate=eDate.getTime();
-
-        foodExpense =mAppDb.transactionDao().getSumExpenseByCategoryCustomDate("Food",sdate,edate);
-        travelExpense=mAppDb.transactionDao().getSumExpenseByCategoryCustomDate("Travel",sdate,edate);
-        clothesExpense=mAppDb.transactionDao().getSumExpenseByCategoryCustomDate("Clothes",sdate,edate);
-        moviesExpense=mAppDb.transactionDao().getSumExpenseByCategoryCustomDate("Movies",sdate,edate);
-        heathExpense=mAppDb.transactionDao().getSumExpenseByCategoryCustomDate("Health",sdate,edate);
-        groceryExpense=mAppDb.transactionDao().getSumExpenseByCategoryCustomDate("Grocery",sdate,edate);
-        otherExpense=mAppDb.transactionDao().getSumExpenseByCategoryCustomDate("Other",sdate,edate);
-    }
-
-    private void getMonthPieValues() throws ParseException{
-
-        Calendar calendar;
-        calendar=Calendar.getInstance();
-
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        String startDate = "", endDate = "";
-
-        calendar.set(Calendar.DAY_OF_MONTH,1);
-        startDate = df.format(calendar.getTime());
-        Date sDate=df.parse(startDate);
-        final long sdate=sDate.getTime();
-
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        endDate = df.format(calendar.getTime());
-        Date eDate=df.parse(endDate);
-        final long edate=eDate.getTime();
-
-        foodExpense =mAppDb.transactionDao().getSumExpenseByCategoryCustomDate("Food",sdate,edate);
-        travelExpense=mAppDb.transactionDao().getSumExpenseByCategoryCustomDate("Travel",sdate,edate);
-        clothesExpense=mAppDb.transactionDao().getSumExpenseByCategoryCustomDate("Clothes",sdate,edate);
-        moviesExpense=mAppDb.transactionDao().getSumExpenseByCategoryCustomDate("Movies",sdate,edate);
-        heathExpense=mAppDb.transactionDao().getSumExpenseByCategoryCustomDate("Health",sdate,edate);
-        groceryExpense=mAppDb.transactionDao().getSumExpenseByCategoryCustomDate("Grocery",sdate,edate);
-        otherExpense=mAppDb.transactionDao().getSumExpenseByCategoryCustomDate("Other",sdate,edate);
-    }
-
     private void getAllBalanceAmount(){
 
         //get date when first transaction date and todays date
-       AppExecutors.getInstance().diskIO().execute(new Runnable() {
-           @Override
-           public void run() {
-               firstDate=mAppDb.transactionDao().getFirstDate();
-           }
-       });
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                firstDate=mAppDb.transactionDao().getFirstDate();
+            }
+        });
 
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         String first = df.format(new Date(firstDate));

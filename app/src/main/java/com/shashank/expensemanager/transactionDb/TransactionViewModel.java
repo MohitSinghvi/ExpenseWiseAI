@@ -1,19 +1,16 @@
 package com.shashank.expensemanager.transactionDb;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
-import com.shashank.expensemanager.utils.Constants;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionViewModel extends AndroidViewModel {
 
-    public final LiveData<List<TransactionEntry>> expenseList;
+    public static LiveData<List<TransactionEntry>> expenseList = null;
     private AppDatabase appDatabase;
 
 
@@ -27,7 +24,7 @@ public class TransactionViewModel extends AndroidViewModel {
     }
 
 
-    public LiveData<List<TransactionEntry>> getExpenseList() {
+    public static LiveData<List<TransactionEntry>> getExpenseList() {
         return expenseList;
     }
 
