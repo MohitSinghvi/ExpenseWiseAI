@@ -34,8 +34,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -209,10 +211,24 @@ public class ChatbotFragment extends Fragment {
 
         Log.i("jsonData", json);
 
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(60, TimeUnit.SECONDS) // Increase the connection timeout
+                .readTimeout(60, TimeUnit.SECONDS) // Increase the read timeout
+                .writeTimeout(60, TimeUnit.SECONDS) // Increase the write timeout
+                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:8000/")
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
                 .build();
+
+
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl("http://10.0.2.2:8000/")
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
 
         ChatbotAPI chatbotAPI = retrofit.create(ChatbotAPI.class);
 
@@ -230,7 +246,7 @@ public class ChatbotFragment extends Fragment {
 
                         if (jsonObject.getBoolean("insert_to_database")) {
                             JSONArray valuesToInsert = jsonObject.getJSONArray("values_to_insert");
-
+                            Log.i("DEBUG-Chat", valuesToInsert.toString());
                             for (int i = 0; i < valuesToInsert.length(); i++) {
                                 JSONObject transactionObject = valuesToInsert.getJSONObject(i);
                                 int amount = transactionObject.getInt("amount");

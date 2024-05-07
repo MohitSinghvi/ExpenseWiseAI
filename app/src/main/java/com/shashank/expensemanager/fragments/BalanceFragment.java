@@ -187,8 +187,14 @@ public class BalanceFragment extends Fragment implements AdapterView.OnItemSelec
                     }
                     pieChart.setVisibility(View.VISIBLE);
                     PieDataSet dataSet = new PieDataSet(pieEntries, null);
-                    dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+//                    dataSet.setColors(ColorTemplate.COLORFUL_COLORS);
                     PieData pieData = new PieData(dataSet);
+
+                    int[] colors = new int[expenseList.size()];
+                    for (int i = 0; i < expenseList.size(); i++) {
+                        colors[i] = Color.HSVToColor(new float[]{i * 360f / expenseList.size(), 1f, 1f});
+                    }
+                    dataSet.setColors(colors);
 
                     pieData.setValueTextSize(16);
                     pieData.setValueTextColor(Color.WHITE);
@@ -285,12 +291,12 @@ public class BalanceFragment extends Fragment implements AdapterView.OnItemSelec
     private void getAllBalanceAmount(){
 
         //get date when first transaction date and todays date
-       AppExecutors.getInstance().diskIO().execute(new Runnable() {
-           @Override
-           public void run() {
-               firstDate=mAppDb.transactionDao().getFirstDate();
-           }
-       });
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                firstDate=mAppDb.transactionDao().getFirstDate();
+            }
+        });
 
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         String first = df.format(new Date(firstDate));
